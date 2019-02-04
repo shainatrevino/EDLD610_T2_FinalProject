@@ -36,6 +36,12 @@ options(scipen = 999)
 
 #### Description of the data source (must be publicly available)
 
+I hope to use the final project as an opportunity to learn how to tidy/visualize my own data using R. Currently, to visualize data in my own research, I first typically obtain means and standard errors in SPSS, then I plot the data in Excel. This practice isn't exactly what I'd call ideal. 
+
+The dataset I will be using is de-identified and already hosted on Github. The data comes from a recent publication of mine (Experiment 1; Miller, Gross, & Unsworth, 2019), in which pupil dilation was used as online indicator of the intensity of attention to determine whether variation in attention at encoding relates to individual differences in working memory capacity (WMC) and long-term memory (LTM) performance. Participants (*N* = 138) completed a battery of complex span working memory tasks, followed by a delayed free recall task while pupil dilation was simultaneously recorded.
+
+An inspection of the data in it's current form reveals that a lot of tidying needs to be done (it's in wide form but needs to be in long form). The complete dataset consists of 183 variables, many of which will be irrelevant for the graphs I have selected to create (e.g., recall accuracy on the delayed free recall task broken down by serial position, encoding strategies). 
+
 ```{r load_data}
 
 data <- import(here("data", "DeIntentifiedJML2019Data_Exp1.sav"),
