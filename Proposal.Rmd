@@ -9,9 +9,23 @@ output:
     toc: yes
     toc_depth: 4
     toc_float: yes
-editor_options: 
-  chunk_output_type: console
+  pdf_document:
+    toc: no
 ---
+
+```{r photo_setup, include=FALSE}
+
+library(knitr)    
+library(ggplot2)  
+library(jpeg) # For grabbing the dimensions of jpg files
+
+img1_path <- "/Users/amiller/Documents/Data Science/Winter 2019/EDLD610_T2_FinalProject/Preliminary graphs/Fig1.jpg"
+
+img2_path <- "/Users/amiller/Documents/Data Science/Winter 2019/EDLD610_T2_FinalProject/Preliminary graphs/Fig2.jpg"
+
+img3_path <- "/Users/amiller/Documents/Data Science/Winter 2019/EDLD610_T2_FinalProject/Preliminary graphs/Fig3.jpg"
+
+```
 
 ```{r setup, include=FALSE}
 
@@ -27,44 +41,62 @@ library(rio)
 library(here)
 library(tidyverse)
 library(magrittr)
-library(ggforce)
 
 # disable scientific notation
 options(scipen = 999)
 
 ```
 
-#### Description of the data source (must be publicly available)
+#### **Description of the data source (must be publicly available)**
 
-I hope to use the final project as an opportunity to learn how to tidy/visualize my own data using R. Currently, to visualize data in my own research, I first typically obtain means and standard errors in SPSS, then I plot the data in Excel. This practice isn't exactly what I'd call ideal. 
+  + I hope to use the final project as an opportunity to learn how to tidy/visualize my own data using R. Currently, to visualize data in my own research, I first typically obtain means and standard errors in SPSS, then I plot the data in Excel. This practice isn't exactly what I'd call ideal. 
 
-The dataset I will be using is de-identified and already hosted on Github. The data comes from a recent publication of mine (Experiment 1; Miller, Gross, & Unsworth, 2019), in which pupil dilation was used as online indicator of the intensity of attention to determine whether variation in attention at encoding relates to individual differences in working memory capacity (WMC) and long-term memory (LTM) performance. Participants (*N* = 138) completed a battery of complex span working memory tasks, followed by a delayed free recall task while pupil dilation was simultaneously recorded.
-
-An inspection of the data in it's current form reveals that a lot of tidying needs to be done (it's in wide form but needs to be in long form). The complete dataset consists of 183 variables, many of which will be irrelevant for the graphs I have selected to create (e.g., recall accuracy on the delayed free recall task broken down by serial position, encoding strategies). 
+  + The dataset I will be using is de-identified and already hosted on Github. The data comes from a recent publication of mine (Experiment 1; Miller, Gross, & Unsworth, 2019), in which pupil dilation was used as an online indicator of the intensity of attention to determine whether variation in attention at encoding relates to individual differences in working memory capacity (WMC) and long-term memory (LTM) performance. Participants (*N* = 138) completed a battery of complex span working memory tasks, followed by a delayed free recall task while pupil dilation was simultaneously recorded.
 
 ```{r load_data}
-
 data <- import(here("data", "DeIntentifiedJML2019Data_Exp1.sav"),
                setclass = "tibble") %>% 
   characterize() %>%
   janitor::clean_names()
-
 ```
 
-#### Preliminary ideas (even hand sketches) of different visualizations
+  + An inspection of the data in it's current form reveals that a lot of tidying needs to be done (it's in wide form but needs to be in long form). The complete dataset consists of 183 variables, many of which will be irrelevant for the graphs I have selected to re-create and improve (e.g., recall accuracy on the delayed free recall task broken down by serial position, encoding strategies). 
 
-  + Identification of the intended audience for each visualization
-  + Note, you might consider displaying the same data/relations more than once, with each plot displayed for a different audience.
-  + The intended message to be communicated for each plot.
-  
-![Figure 1 (Fig. 4 in Miller, Gross, & Unsworth, 2019). Pupil diameter as a function of time point (bin) at encoding of each word](/Users/amiller/Documents/Data Science/Winter 2019/EDLD610_T2_FinalProject/Preliminary graphs/Fig1.jpg)
-
-![Figure 2 (Fig. 5. in Miller, Gross, & Unsworth, 2019). Pupil diameter as a function of serial position for high WMC (*n* = 33) and low WMC (*n* = 31) individuals.](/Users/amiller/Documents/Data Science/Winter 2019/EDLD610_T2_FinalProject/Preliminary graphs/Fig2.jpg)
-
-![Figure 3 (Fig. 6. in Miller, Gross, & Unsworth, 2019). Pupil diameter as a function of serial position and bin (time across encoding period) for low WMC (*n* = 31) and high WMC (*n* = 33) individuals. Serial position was broken down into Primacy (items 1–3), Mid (items 4–7), and Recency (items 8–10) for graphical purposes only.](/Users/amiller/Documents/Data Science/Winter 2019/EDLD610_T2_FinalProject/Preliminary graphs/Fig3.jpg)
-  
-```{r preliminary_ideas}
-
-
+```{r view_data}
+data %>%
+  head()
 ```
+
+#### **Preliminary ideas of different visualizations**
+
+  + **Figure 1. Pupil diameter as a function of time point (bin) at encoding of each word (was Fig. 4 in Miller, Gross, & Unsworth, 2019).**
+    + Identification of the intended audience: Scientific community
+    + The intended message to be communicated: Pupil diameter increases throughout the encoding period for each word
+
+```{r fig1, out.width = "75%", fig.align='center', echo=FALSE}
+include_graphics(img1_path) 
+```
+
+  + **Figure 2. Pupil diameter as a function of serial position for high WMC (*n* = 33) and low WMC (*n* = 31) individuals (was Fig. 5 in Miller, Gross, & Unsworth, 2019).**
+    + Identification of the intended audience: Scientific community
+    + The intended message to be communicated: Different patterns of pupil dilation across serial positions emerge based on one's working memory capacity (WMC). Namely, for high WMC individuals (*n* = 33), pupil diameter **increases** as each new word is introduced during the learning phase of the task. Alternatively, for low WMC individuals (*n* = 31), pupil diameter **decreases** as each new word is introducted during learning.
+
+```{r fig2, out.width = "70%", fig.align='center', echo=FALSE}
+include_graphics(img2_path) 
+```
+
+  + **Figure 3. Pupil diameter as a function of serial position and bin (time across encoding period) for low WMC (*n* = 31) and high WMC (*n* = 33) individuals. Serial position was broken down into Primacy (items 1–3), Mid (items 4–7), and Recency (items 8–10) for graphical purposes only (Fig. 6. in Miller, Gross, & Unsworth, 2019).**
+    + Identification of the intended audience: Scientific community
+    + The intended message to be communicated: This figure essentially conveys the same information as the figure above. For high WMC individuals, pupil dilation continues to gradually increase throughout the encoding period for all serial positions, with primacy items (the first three words presented during list presentation) displaying smaller dilations than mid (words 4–7) and recency items (the last three words presented during list presentation--words 8–10). Conversely, low WMC individuals show moderate increases in dilation that appear to plateau near the middle of the encoding period. Moreover, pupil dilation appears to be largest for primacy items and smallest for recency items, despite a gradual increase in dilation for recency items.
+
+```{r fig3, out.width = "80%", fig.align='center', echo=FALSE}
+include_graphics(img3_path) 
+```
+
+```{r all_figures, include=FALSE}
+#![Figure 1 (Fig. 4 in Miller, Gross, & Unsworth, 2019). Pupil diameter as a function of time point (bin) at encoding of each word](/Users/amiller/Documents/Data Science/Winter 2019/EDLD610_T2_FinalProject/Preliminary graphs/Fig1.jpg)
+#![Figure 2 (Fig. 5. in Miller, Gross, & Unsworth, 2019). Pupil diameter as a function of serial position for high WMC (*n* = 33) and low WMC (*n* = 31) individuals.](/Users/amiller/Documents/Data Science/Winter 2019/EDLD610_T2_FinalProject/Preliminary graphs/Fig2.jpg)
+#![Figure 3 (Fig. 6. in Miller, Gross, & Unsworth, 2019). Pupil diameter as a function of serial position and bin (time across encoding period) for low WMC (*n* = 31) and high WMC (*n* = 33) individuals. Serial position was broken down into Primacy (items 1–3), Mid (items 4–7), and Recency (items 8–10) for graphical purposes only.](/Users/amiller/Documents/Data Science/Winter 2019/EDLD610_T2_FinalProject/Preliminary graphs/Fig3.jpg)
+```
+
 
