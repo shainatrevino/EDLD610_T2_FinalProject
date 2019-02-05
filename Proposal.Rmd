@@ -15,6 +15,8 @@ editor_options:
 
 ```{r photo_setup, include=FALSE}
 
+library(ggplot2)
+library(knitr)
 library(jpeg)
 
 img1_path <- "/Users/amiller/Documents/Data Science/Winter 2019/EDLD610_T2_FinalProject/Preliminary graphs/Fig1.jpg"
@@ -58,7 +60,7 @@ data <- import(here("data", "DeIntentifiedJML2019Data_Exp1.sav"),
   janitor::clean_names()
 ```
 
-  + An inspection of the data in it's current form reveals that a lot of tidying needs to be done (it's in wide format but needs to be in long format). The complete dataset consists of 183 variables, many of which will be irrelevant for the graphs I have selected to re-create and improve (e.g., recall accuracy on the delayed free recall task broken down by serial position, encoding strategies). 
+  + An inspection of the data in it's current form reveals that a lot of tidying needs to be done (it's in wide format but needs to be in long format). The complete dataset consists of 183 variables, many of which will be irrelevant for the graphs I have selected to create/improve. 
 
 ```{r view_data}
 data %>%
@@ -117,7 +119,7 @@ include_graphics(img3_path)
 
 #### Possibility # 4
 
-  + I'd like to create a figure depicting the strong relation between recall accuracy and strategy use. Upon completion of the memory task, strategy use was probed by asking participants whether or not they used any of the following strategies: 1) Read each word as it appeared, (2) Repeated the words as much as possible, (3) Used a sentence to link the words together, (4) Developed mental images of the words, (5) Grouped the words in a meaningful way, and (6) Did something else. Participants were allowed to select more than one strategy. Ineffective strategies were characterized as passive reading and rehearsal, whereas effective strategies were characterized as interactive imagery, sentence generation, and grouping. 
+  + I'd like to create a figure depicting the relation between recall accuracy and strategy use. Upon completion of the memory task, strategy use was probed by asking participants whether or not they used any of the following strategies: 1) Read each word as it appeared, (2) Repeated the words as much as possible, (3) Used a sentence to link the words together, (4) Developed mental images of the words, (5) Grouped the words in a meaningful way, and (6) Did something else. Participants were allowed to select more than one strategy. Ineffective strategies were characterized as passive reading and rehearsal, whereas effective strategies were characterized as interactive imagery, sentence generation, and grouping. 
   
   + I haven't decided which geom I'd like to use for the final product. But, as a starting point, I could create a bar graph with recall accuracy on the y-axis and strategy type (ineffective vs effective) on the x-axis.
   
