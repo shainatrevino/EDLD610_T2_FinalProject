@@ -51,7 +51,7 @@ options(scipen = 999)
 
   + I hope to use the final project as an opportunity to learn how to tidy/visualize my own data using R. Currently, to visualize data in my own research, I first typically obtain means and standard errors in SPSS, then I plot the data in Excel. This practice isn't exactly what I'd call ideal. 
 
-  + The dataset I will be using is de-identified and already hosted on Github. The data comes from one of my recent publications (Experiment 1; Miller, Gross, & Unsworth, 2019). In this paper, pupil dilation was used as an online indicator of the intensity of attention to determine whether variation in attention at encoding relates to individual differences in working memory capacity (WMC) and long-term memory (LTM) performance. Participants (*N* = 138) completed a battery of complex span working memory tasks, followed by a delayed free recall task while pupil dilation was simultaneously recorded.
+  + The dataset I will be using is de-identified and already hosted on Github. The data come from one of my recent publications (Experiment 1; Miller, Gross, & Unsworth, 2019). In this paper, pupil dilation was used as an online indicator of the intensity of attention to determine whether variation in attention at encoding relates to individual differences in working memory capacity (WMC) and long-term memory (LTM) performance. Participants (*N* = 138) completed a battery of complex span working memory tasks, followed by a delayed free recall task while pupil dilation was simultaneously recorded.
 
 ```{r load_data}
 data <- import(here("data", "DeIntentifiedJML2019Data_Exp1.sav"),
@@ -75,7 +75,7 @@ data %>%
   
     + **Identification of the intended audience:** Scientific community
     
-    + **The intended message to be communicated:** Pupil diameter increases throughout the encoding period for each word
+    + **The intended message to be communicated:** When instructed to study a list of words, pupil diameter increases throughout the encoding period for each word. This increase in pupil dilation is believed to reflect an increase in the amount of attentional effort devoted to a given item.
     
     + **How I intend to make the graph better:** I will shade the region of standard error around each estimate instead of using the traditional error bars. I also want to rotate the x-axis values and use color!
 
