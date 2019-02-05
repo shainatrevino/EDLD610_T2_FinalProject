@@ -15,9 +15,7 @@ editor_options:
 
 ```{r photo_setup, include=FALSE}
 
-library(knitr)    
-library(ggplot2)  
-library(jpeg) # For grabbing the dimensions of jpg files
+library(jpeg)
 
 img1_path <- "/Users/amiller/Documents/Data Science/Winter 2019/EDLD610_T2_FinalProject/Preliminary graphs/Fig1.jpg"
 
@@ -60,7 +58,7 @@ data <- import(here("data", "DeIntentifiedJML2019Data_Exp1.sav"),
   janitor::clean_names()
 ```
 
-  + An inspection of the data in it's current form reveals that a lot of tidying needs to be done (it's in wide form but needs to be in long form). The complete dataset consists of 183 variables, many of which will be irrelevant for the graphs I have selected to re-create and improve (e.g., recall accuracy on the delayed free recall task broken down by serial position, encoding strategies). 
+  + An inspection of the data in it's current form reveals that a lot of tidying needs to be done (it's in wide format but needs to be in long format). The complete dataset consists of 183 variables, many of which will be irrelevant for the graphs I have selected to re-create and improve (e.g., recall accuracy on the delayed free recall task broken down by serial position, encoding strategies). 
 
 ```{r view_data}
 data %>%
