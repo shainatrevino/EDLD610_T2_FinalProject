@@ -243,16 +243,16 @@ pupil_data %<>%
 ```
 
 ```{r tidy_data}
-#tidy data
-pupil_data %<>%
+
+plot1_data <- pupil_data %>%
   gather(key = word_bin, value = TEPR, w1_bin1:w10_bin15) %>%
+  separate(word_bin, c("word", "bin"), sep = "_") %>%
+  mutate(word = parse_number(word),
+         bin = parse_number(bin)) %>%
   arrange(subject)
 
-glimpse(pupil_data)
+glimpse(plot1_data)
 
-pupil_data %<>%
-  mutate(TEPR = as.numeric(TEPR),
-         word_bin = as.factor(word_bin))
 ```
 
 ```{r plot1}
