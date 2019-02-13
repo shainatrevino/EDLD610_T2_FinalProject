@@ -43,3 +43,218 @@ data <- import(here("data", "DeIntentifiedJML2019Data_Exp1.sav"),
 
 ```
 
+```{rtidy_data}
+
+#select variables of interest for pupil data
+pupil_data <- data %>%
+  select(-sp1_acc:-symspan, 
+         -ineffective:-recency_recall,
+         -baseline_pupil_mean:-tepr_recency)
+
+#rename variables
+pupil_data %<>%
+  rename(w1_bin1 = ebin1w1pt4_mean,
+         w1_bin2 = ebin2w1pt4_mean,
+         w1_bin3 = ebin3w1pt4_mean,
+         w1_bin4 = ebin4w1pt4_mean,
+         w1_bin5 = ebin5w1pt4_mean,
+         w1_bin6 = ebin6w1pt4_mean,
+         w1_bin7 = ebin7w1pt4_mean,
+         w1_bin8 = ebin8w1pt4_mean,
+         w1_bin9 = ebin9w1pt4_mean,
+         w1_bin10 = ebin10w1pt4_mean,
+         w1_bin11 = ebin11w1pt4_mean,
+         w1_bin12 = ebin12w1pt4_mean,
+         w1_bin13 = ebin13w1pt4_mean,
+         w1_bin14 = ebin14w1pt4_mean,
+         w1_bin15 = ebin15w1pt4_mean)
+
+pupil_data %<>%
+  rename(w2_bin1 = ebin1w2pt4_mean,
+         w2_bin2 = ebin2w2pt4_mean,
+         w2_bin3 = ebin3w2pt4_mean,
+         w2_bin4 = ebin4w2pt4_mean,
+         w2_bin5 = ebin5w2pt4_mean,
+         w2_bin6 = ebin6w2pt4_mean,
+         w2_bin7 = ebin7w2pt4_mean,
+         w2_bin8 = ebin8w2pt4_mean,
+         w2_bin9 = ebin9w2pt4_mean,
+         w2_bin10 = ebin10w2pt4_mean,
+         w2_bin11 = ebin11w2pt4_mean,
+         w2_bin12 = ebin12w2pt4_mean,
+         w2_bin13 = ebin13w2pt4_mean,
+         w2_bin14 = ebin14w2pt4_mean,
+         w2_bin15 = ebin15w2pt4_mean)
+
+pupil_data %<>%
+  rename(w3_bin1 = ebin1w3pt4_mean,
+         w3_bin2 = ebin2w3pt4_mean,
+         w3_bin3 = ebin3w3pt4_mean,
+         w3_bin4 = ebin4w3pt4_mean,
+         w3_bin5 = ebin5w3pt4_mean,
+         w3_bin6 = ebin6w3pt4_mean,
+         w3_bin7 = ebin7w3pt4_mean,
+         w3_bin8 = ebin8w3pt4_mean,
+         w3_bin9 = ebin9w3pt4_mean,
+         w3_bin10 = ebin10w3pt4_mean,
+         w3_bin11 = ebin11w3pt4_mean,
+         w3_bin12 = ebin12w3pt4_mean,
+         w3_bin13 = ebin13w3pt4_mean,
+         w3_bin14 = ebin14w3pt4_mean,
+         w3_bin15 = ebin15w3pt4_mean)
+
+pupil_data %<>%
+  rename(w4_bin1 = ebin1w4pt4_mean,
+         w4_bin2 = ebin2w4pt4_mean,
+         w4_bin3 = ebin3w4pt4_mean,
+         w4_bin4 = ebin4w4pt4_mean,
+         w4_bin5 = ebin5w4pt4_mean,
+         w4_bin6 = ebin6w4pt4_mean,
+         w4_bin7 = ebin7w4pt4_mean,
+         w4_bin8 = ebin8w4pt4_mean,
+         w4_bin9 = ebin9w4pt4_mean,
+         w4_bin10 = ebin10w4pt4_mean,
+         w4_bin11 = ebin11w4pt4_mean,
+         w4_bin12 = ebin12w4pt4_mean,
+         w4_bin13 = ebin13w4pt4_mean,
+         w4_bin14 = ebin14w4pt4_mean,
+         w4_bin15 = ebin15w4pt4_mean)
+
+pupil_data %<>%
+  rename(w5_bin1 = ebin1w5pt4_mean,
+         w5_bin2 = ebin2w5pt4_mean,
+         w5_bin3 = ebin3w5pt4_mean,
+         w5_bin4 = ebin4w5pt4_mean,
+         w5_bin5 = ebin5w5pt4_mean,
+         w5_bin6 = ebin6w5pt4_mean,
+         w5_bin7 = ebin7w5pt4_mean,
+         w5_bin8 = ebin8w5pt4_mean,
+         w5_bin9 = ebin9w5pt4_mean,
+         w5_bin10 = ebin10w5pt4_mean,
+         w5_bin11 = ebin11w5pt4_mean,
+         w5_bin12 = ebin12w5pt4_mean,
+         w5_bin13 = ebin13w5pt4_mean,
+         w5_bin14 = ebin14w5pt4_mean,
+         w5_bin15 = ebin15w5pt4_mean)
+
+pupil_data %<>%
+  rename(w6_bin1 = ebin1w6pt4_mean,
+         w6_bin2 = ebin2w6pt4_mean,
+         w6_bin3 = ebin3w6pt4_mean,
+         w6_bin4 = ebin4w6pt4_mean,
+         w6_bin5 = ebin5w6pt4_mean,
+         w6_bin6 = ebin6w6pt4_mean,
+         w6_bin7 = ebin7w6pt4_mean,
+         w6_bin8 = ebin8w6pt4_mean,
+         w6_bin9 = ebin9w6pt4_mean,
+         w6_bin10 = ebin10w6pt4_mean,
+         w6_bin11 = ebin11w6pt4_mean,
+         w6_bin12 = ebin12w6pt4_mean,
+         w6_bin13 = ebin13w6pt4_mean,
+         w6_bin14 = ebin14w6pt4_mean,
+         w6_bin15 = ebin15w6pt4_mean)
+
+pupil_data %<>%
+  rename(w7_bin1 = ebin1w7pt4_mean,
+         w7_bin2 = ebin2w7pt4_mean,
+         w7_bin3 = ebin3w7pt4_mean,
+         w7_bin4 = ebin4w7pt4_mean,
+         w7_bin5 = ebin5w7pt4_mean,
+         w7_bin6 = ebin6w7pt4_mean,
+         w7_bin7 = ebin7w7pt4_mean,
+         w7_bin8 = ebin8w7pt4_mean,
+         w7_bin9 = ebin9w7pt4_mean,
+         w7_bin10 = ebin10w7pt4_mean,
+         w7_bin11 = ebin11w7pt4_mean,
+         w7_bin12 = ebin12w7pt4_mean,
+         w7_bin13 = ebin13w7pt4_mean,
+         w7_bin14 = ebin14w7pt4_mean,
+         w7_bin15 = ebin15w7pt4_mean)
+
+pupil_data %<>%
+  rename(w8_bin1 = ebin1w8pt4_mean,
+         w8_bin2 = ebin2w8pt4_mean,
+         w8_bin3 = ebin3w8pt4_mean,
+         w8_bin4 = ebin4w8pt4_mean,
+         w8_bin5 = ebin5w8pt4_mean,
+         w8_bin6 = ebin6w8pt4_mean,
+         w8_bin7 = ebin7w8pt4_mean,
+         w8_bin8 = ebin8w8pt4_mean,
+         w8_bin9 = ebin9w8pt4_mean,
+         w8_bin10 = ebin10w8pt4_mean,
+         w8_bin11 = ebin11w8pt4_mean,
+         w8_bin12 = ebin12w8pt4_mean,
+         w8_bin13 = ebin13w8pt4_mean,
+         w8_bin14 = ebin14w8pt4_mean,
+         w8_bin15 = ebin15w8pt4_mean)
+
+pupil_data %<>%
+  rename(w9_bin1 = ebin1w9pt4_mean,
+         w9_bin2 = ebin2w9pt4_mean,
+         w9_bin3 = ebin3w9pt4_mean,
+         w9_bin4 = ebin4w9pt4_mean,
+         w9_bin5 = ebin5w9pt4_mean,
+         w9_bin6 = ebin6w9pt4_mean,
+         w9_bin7 = ebin7w9pt4_mean,
+         w9_bin8 = ebin8w9pt4_mean,
+         w9_bin9 = ebin9w9pt4_mean,
+         w9_bin10 = ebin10w9pt4_mean,
+         w9_bin11 = ebin11w9pt4_mean,
+         w9_bin12 = ebin12w9pt4_mean,
+         w9_bin13 = ebin13w9pt4_mean,
+         w9_bin14 = ebin14w9pt4_mean,
+         w9_bin15 = ebin15w9pt4_mean)
+
+pupil_data %<>%
+  rename(w10_bin1 = ebin1w10pt4_mean,
+         w10_bin2 = ebin2w10pt4_mean,
+         w10_bin3 = ebin3w10pt4_mean,
+         w10_bin4 = ebin4w10pt4_mean,
+         w10_bin5 = ebin5w10pt4_mean,
+         w10_bin6 = ebin6w10pt4_mean,
+         w10_bin7 = ebin7w10pt4_mean,
+         w10_bin8 = ebin8w10pt4_mean,
+         w10_bin9 = ebin9w10pt4_mean,
+         w10_bin10 = ebin10w10pt4_mean,
+         w10_bin11 = ebin11w10pt4_mean,
+         w10_bin12 = ebin12w10pt4_mean,
+         w10_bin13 = ebin13w10pt4_mean,
+         w10_bin14 = ebin14w10pt4_mean,
+         w10_bin15 = ebin15w10pt4_mean)
+
+#tidy data
+pupil_data %<>%
+  gather(key = word_bin, value = TEPR, w1_bin1:w10_bin15) %>%
+  arrange(subject)
+
+glimpse(pupil_data)
+
+pupil_data %<>%
+  mutate(TEPR = as.numeric(TEPR),
+         word_bin = as.factor(word_bin))
+
+```
+
+```{r plot1}
+
+plot1_data <- pupil_data %>%
+  separate(word_bin, into = c("word", "bin"), sep = "_") %>%
+  mutate(word = parse_number(word),
+         bin = parse_number(bin)) 
+
+SE <- function(x){
+  SE <- sqrt((SD(x)^2)/length(x))
+  return(SE)
+}
+
+plot1_data %>%
+  group_by(bin) %>%
+  summarise(mean_TEPR = mean(TEPR, na.rm = TRUE),
+            sd_TEPR = sd(TEPR, na.rm = TRUE)) %>%
+  ggplot(aes(x = bin, y = mean_TEPR)) +
+  geom_jitter() +
+  geom_smooth() +
+  theme_minimal()
+
+```
+
