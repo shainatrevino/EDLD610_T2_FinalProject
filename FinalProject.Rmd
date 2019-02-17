@@ -28,6 +28,7 @@ library(tidyverse)
 library(magrittr)
 library(ggforce)
 library(rcartocolor)
+library(cowplot)
 
 
 # disable scientific notation
@@ -284,22 +285,44 @@ each to-be-remembered word.",
                                  "1,800", "2,000", "2,200", "2,400", "2,600", "2,800", "3,000"),
                        limits = c(0, NA))
 
+ash_theme <- theme(panel.grid.major = element_line(colour = "gray30"), 
+                   panel.grid.minor = element_line(colour = "gray30"), 
+                   axis.text = element_text(colour = "gray80"), 
+                   axis.text.x = element_text(colour = "gray80"), 
+                   axis.text.y = element_text(colour = "gray80"),
+                   axis.title = element_text(colour = "gray80"),
+                   legend.text = element_text(colour = "gray80"), 
+                   legend.title = element_text(colour = "gray80"), 
+                   plot.subtitle = element_text(colour = "gray80"),
+                   strip.text = element_text(colour = "gray80"),
+                   panel.background = element_rect(fill = "gray10"),                     
+                   plot.background = element_rect(fill = "gray10"), 
+                   legend.background = element_rect(fill = NA, color = NA), 
+                   plot.margin = margin(10, 10, b = 20, 10),
+                   plot.caption = element_text(colour = "gray80", vjust = 1), 
+                   plot.title = element_text(colour = "gray80"))
 
-plot1 + theme(panel.grid.major = element_line(colour = "gray30"), 
-          panel.grid.minor = element_line(colour = "gray30"), 
-          axis.text = element_text(colour = "gray80"), 
-          axis.text.x = element_text(colour = "gray80"), 
-          axis.text.y = element_text(colour = "gray80"),
-          axis.title = element_text(colour = "gray80"),
-          #legend.text = element_text(colour = "gray80"), 
-          #legend.title = element_text(colour = "gray80"), 
-          #strip.text = element_text(colour = "gray80"),
-          panel.background = element_rect(fill = "gray10"), 
-          plot.background = element_rect(fill = "gray10"), 
-          #legend.background = element_rect(fill = NA, color = NA), 
-          plot.margin = margin(10, 10, b = 20, 10),
-          plot.caption = element_text(colour = "gray80", vjust = 1), 
-          plot.title = element_text(colour = "gray80"))
+ash_theme2 <- theme(panel.grid.major = element_line(colour = "gray30"), 
+                   panel.grid.minor = element_line(colour = "gray30"), 
+                   axis.text = element_text(colour = "gray80"), 
+                   axis.text.x = element_text(colour = "gray80"), 
+                   axis.text.y = element_text(colour = "gray80"),
+                   axis.title = element_text(colour = "gray80"),
+                   legend.text = element_text(colour = "gray80"), 
+                   legend.title = element_text(colour = "gray80"), 
+                   plot.subtitle = element_text(colour = "gray80"),
+                   strip.text = element_text(colour = "gray80"),
+                   panel.background = element_rect(fill = "gray10"),                     
+                   plot.background = element_rect(fill = "gray10"), 
+                   legend.background = element_rect(fill = "gray10"), 
+                   plot.margin = margin(10, 10, b = 20, 10),
+                   plot.caption = element_text(colour = "gray80", vjust = 1), 
+                   plot.title = element_text(colour = "gray80"))
+
+plot1 <- plot1 + ash_theme
+
+plot1
+
 ```
 
 ### Plot 2
@@ -331,20 +354,117 @@ plot2 <- plot1_data %>%
    scale_x_continuous(breaks = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
                        labels = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10")) 
 
-plot2 + theme(panel.grid.major = element_line(colour = "gray30"), 
-          panel.grid.minor = element_line(colour = "gray30"), 
-          axis.text = element_text(colour = "gray80"), 
-          axis.text.x = element_text(colour = "gray80"), 
-          axis.text.y = element_text(colour = "gray80"),
-          axis.title = element_text(colour = "gray80"),
-          legend.text = element_text(colour = "gray80"), 
-          legend.title = element_text(colour = "gray80"), 
-          #strip.text = element_text(colour = "gray80"),
-          panel.background = element_rect(fill = "gray10"), 
-          plot.background = element_rect(fill = "gray10"), 
-          legend.background = element_rect(fill = NA, color = NA), 
-          plot.margin = margin(10, 10, b = 20, 10),
-          plot.caption = element_text(colour = "gray80", vjust = 1), 
-          plot.title = element_text(colour = "gray80"))
+plot2 <- plot2 + ash_theme
+
+plot2
+
+```
+
+### Plot 3
+#### First attempt to plot pupil diameter as a function of serial position and bin (time across encoding period) for low WMC (*n* = 31) and high WMC (*n* = 33) individuals. Serial position was broken down into Primacy (items 1–3), Mid (items 4–7), and Recency (items 8–10) for graphical purposes only.
++ Fig. 6 in Miller, Gross, & Unsworth (2019)
+    + **Identification of the intended audience:** Scientific community
+    + **The intended message to be communicated:** This figure essentially conveys the same information as the figure above. For high WMC individuals, pupil dilation continues to gradually increase throughout the encoding period for all serial positions, with primacy items (the first few words presented during list presentation; words 1-3) displaying smaller dilations than mid (words 4–7) and recency items (the last few words presented during list presentation; words 8–10). Conversely, low WMC individuals show moderate increases in dilation that appear to plateau near the middle of the encoding period. Moreover, pupil dilation appears to be largest for primacy items and smallest for recency items, despite a gradual increase in dilation for recency items.
+
+```{r plot3_tidy1}
+
+primacy <- plot1_data %>%
+  filter(word < 4) %>%
+  group_by(bin, span_group) %>%
+  summarise(primacy_TEPR = mean(TEPR, na.rm = TRUE))
+
+mid <- plot1_data %>%
+  filter(word > 3,
+         word < 8) %>%
+  group_by(bin, span_group) %>%
+  summarise(mid_TEPR = mean(TEPR, na.rm = TRUE))
+
+recency <- plot1_data %>%
+  filter(word > 7) %>%
+  group_by(bin, span_group) %>%
+  summarise(recency_TEPR = mean(TEPR, na.rm = TRUE))
+
+```
+
+```{r plot3}
+
+plot3a <- ggplot(primacy, aes(x = bin, y = primacy_TEPR, color = span_group)) +
+  geom_smooth() +
+  scale_color_carto_d(palette = "Burg") +
+  theme_minimal() +
+  theme(axis.title = element_text(face = "bold"),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        plot.title = element_text(face = "bold"),
+        plot.caption = element_text(hjust = 0),
+        plot.subtitle = element_text(face = "bold", hjust = 0.5)) +
+  labs(subtitle = "Primacy Items (Words 1-3)",
+           y = "Mean Pupillary Response (mm)",
+           x = "",
+           colour = "WMC") +
+  scale_x_continuous(breaks = c(0, 2, 4, 6, 8, 10, 12, 14),
+                     labels = c("0", "400", "800", "1,200", "1,600", "2,000", "2,400","2,800"),
+                     limits = c(0, NA)) +
+  scale_y_continuous(breaks = c(-0.10, -0.05, 0.00, 0.05, 0.10, 0.15),
+                     label = c("-0.10", "-0.05", "0.00", "0.05", "0.10", "0.15"),
+                     limits = c(-0.10, 0.15))
+
+plot3a <- plot3a + ash_theme 
+plot3a <- plot3a + theme(legend.position = "none")
+
+plot3b <- ggplot(mid, aes(x = bin, y = mid_TEPR, color = span_group)) +
+  geom_smooth() +
+  scale_color_carto_d(palette = "Burg") +
+  theme_minimal() +
+  theme(axis.title = element_text(face = "bold"),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        plot.title = element_text(face = "bold"),
+        plot.caption = element_text(hjust = 0),
+        plot.subtitle = element_text(face = "bold", hjust = 0.5)) +
+  labs(subtitle = "Middle Items (Words 4-7)",
+           y = "",
+           x = "Time (ms)",
+           colour = "WMC") +
+  scale_x_continuous(breaks = c(0, 2, 4, 6, 8, 10, 12, 14),
+                     labels = c("0", "400", "800", "1,200", "1,600", "2,000", "2,400","2,800"),
+                     limits = c(0, NA)) +
+  scale_y_continuous(breaks = c(-0.10, -0.05, 0.00, 0.05, 0.10, 0.15),
+                     label = c("-0.10", "-0.05", "0.00", "0.05", "0.10", "0.15"),
+                     limits = c(-0.10, 0.15))
+
+plot3b <- plot3b + ash_theme
+plot3b <- plot3b + theme(legend.position = "none")
+
+plot3c <- ggplot(recency, aes(x = bin, y = recency_TEPR, color = span_group)) +
+  geom_smooth() +
+  scale_color_carto_d(palette = "Burg") +
+  theme_minimal() +
+  theme(axis.title = element_text(face = "bold"),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        plot.title = element_text(face = "bold"),
+        plot.caption = element_text(hjust = 0),
+        plot.subtitle = element_text(face = "bold", hjust = 0.5)) +
+  labs(subtitle = "Recency Items (Words 8-10)",
+        y = "",
+        x = "",
+        colour = "WMC") +
+  scale_x_continuous(breaks = c(0, 2, 4, 6, 8, 10, 12, 14),
+                     labels = c("0", "400", "800", "1,200", "1,600", "2,000", "2,400","2,800"),
+                     limits = c(0, NA)) +
+  scale_y_continuous(breaks = c(-0.10, -0.05, 0.00, 0.05, 0.10, 0.15),
+                     label = c("-0.10", "-0.05", "0.00", "0.05", "0.10", "0.15"),
+                     limits = c(-0.10, 0.15))
+
+plot3c <- plot3c + ash_theme
+plot3c <- plot3c + theme(legend.position = "none")
+
+plot3 <- plot_grid(plot3a, plot3b, plot3c, labels = c("", "", ""), align = "h", nrow = 1) 
+
+test <- plot2 + ash_theme2
+
+grobs <- ggplotGrob(test)$grobs
+legend <- grobs[[which(sapply(grobs, function(x) x$name) == "guide-box")]]
+
+plot_grid(plot3, legend, ncol = 2, rel_widths = c(1, .1)) #still need to find a way to fill pannel around background???
+
 ```
 
