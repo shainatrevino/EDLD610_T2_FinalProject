@@ -268,7 +268,7 @@ plot1 <- plot1_data %>%
   summarise(mean_TEPR = mean(TEPR, na.rm = TRUE),
             sd_TEPR = sd(TEPR, na.rm = TRUE))
 
-plot1 <- rbind(plot1, "1st" = c(0, 0, 0)) %>%
+plot1 <- rbind(plot1, "1st" = c(0, 0, 0)) %>% #this just makes the line begin at x = 0 and y = 0
   ggplot(aes(x = bin, y = mean_TEPR)) +
     geom_smooth(color = "#2DDADA") +
     theme_minimal() +
