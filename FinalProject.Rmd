@@ -22,6 +22,8 @@ knitr::opts_chunk$set(echo = TRUE,
                       fig.height = 4.5)
 
 # load packages
+#devtools::install_github("datalorax/sundry")
+library(pkgconfig)
 library(rio)
 library(here)
 library(tidyverse)
@@ -29,7 +31,9 @@ library(magrittr)
 library(ggforce)
 library(rcartocolor)
 library(cowplot)
-
+library(sundry)
+library(showtext)
+library(sundry)
 
 # disable scientific notation
 options(scipen = 999)
@@ -55,7 +59,9 @@ pupil_data <- data %>%
          -ineffective:-recency_recall,
          -baseline_pupil_mean:-tepr_recency)
 
-#Cam's efficient method to rename variables
+# Cam's efficient method to rename bin/word variables
+# E.g., data currently reads ebin1w1pt4_mean
+# I just want the variable to read bin1w1
 pupil_data %<>%
   rename_at(
     vars(starts_with("ebin")),
@@ -68,186 +74,13 @@ pupil_data %<>%
 
 ```
 
-```{r rename_bad, include=FALSE, eval=FALSE}
-
-#Note that Cam's method of renaming variables does so in 10 lines, compared to the following:
-
-#pupil_data %<>%
- # rename(w1_bin1 = ebin1w1pt4_mean,
-  #       w1_bin2 = ebin2w1pt4_mean,
-   #      w1_bin3 = ebin3w1pt4_mean,
-    #     w1_bin4 = ebin4w1pt4_mean,
-     #    w1_bin5 = ebin5w1pt4_mean,
-      #   w1_bin6 = ebin6w1pt4_mean,
-       #  w1_bin7 = ebin7w1pt4_mean,
-        # w1_bin8 = ebin8w1pt4_mean,
-         #w1_bin9 = ebin9w1pt4_mean,
-         #w1_bin10 = ebin10w1pt4_mean,
-         #w1_bin11 = ebin11w1pt4_mean,
-         #w1_bin12 = ebin12w1pt4_mean,
-         #w1_bin13 = ebin13w1pt4_mean,
-         #w1_bin14 = ebin14w1pt4_mean,
-         #w1_bin15 = ebin15w1pt4_mean)
-
-#pupil_data %<>%
- # rename(w2_bin1 = ebin1w2pt4_mean,
-  #       w2_bin2 = ebin2w2pt4_mean,
-   #      w2_bin3 = ebin3w2pt4_mean,
-    #     w2_bin4 = ebin4w2pt4_mean,
-     #    w2_bin5 = ebin5w2pt4_mean,
-      #   w2_bin6 = ebin6w2pt4_mean,
-       #  w2_bin7 = ebin7w2pt4_mean,
-        # w2_bin8 = ebin8w2pt4_mean,
-         #w2_bin9 = ebin9w2pt4_mean,
-         #w2_bin10 = ebin10w2pt4_mean,
-         #w2_bin11 = ebin11w2pt4_mean,
-         #w2_bin12 = ebin12w2pt4_mean,
-         #w2_bin13 = ebin13w2pt4_mean,
-         #w2_bin14 = ebin14w2pt4_mean,
-         #w2_bin15 = ebin15w2pt4_mean)
-
-#pupil_data %<>%
- # rename(w3_bin1 = ebin1w3pt4_mean,
-  #       w3_bin2 = ebin2w3pt4_mean,
-   #      w3_bin3 = ebin3w3pt4_mean,
-    #     w3_bin4 = ebin4w3pt4_mean,
-     #    w3_bin5 = ebin5w3pt4_mean,
-      #   w3_bin6 = ebin6w3pt4_mean,
-       #  w3_bin7 = ebin7w3pt4_mean,
-        # w3_bin8 = ebin8w3pt4_mean,
-         #w3_bin9 = ebin9w3pt4_mean,
-         #w3_bin10 = ebin10w3pt4_mean,
-         #w3_bin11 = ebin11w3pt4_mean,
-         #w3_bin12 = ebin12w3pt4_mean,
-         #w3_bin13 = ebin13w3pt4_mean,
-         #w3_bin14 = ebin14w3pt4_mean,
-         #w3_bin15 = ebin15w3pt4_mean)
-
-#pupil_data %<>%
- # rename(w4_bin1 = ebin1w4pt4_mean,
-  #       w4_bin2 = ebin2w4pt4_mean,
-   #      w4_bin3 = ebin3w4pt4_mean,
-    #     w4_bin4 = ebin4w4pt4_mean,
-     #    w4_bin5 = ebin5w4pt4_mean,
-      #   w4_bin6 = ebin6w4pt4_mean,
-       #  w4_bin7 = ebin7w4pt4_mean,
-        # w4_bin8 = ebin8w4pt4_mean,
-         #w4_bin9 = ebin9w4pt4_mean,
-         #w4_bin10 = ebin10w4pt4_mean,
-         #w4_bin11 = ebin11w4pt4_mean,
-         #w4_bin12 = ebin12w4pt4_mean,
-         #w4_bin13 = ebin13w4pt4_mean,
-         #w4_bin14 = ebin14w4pt4_mean,
-         #w4_bin15 = ebin15w4pt4_mean)
-
-#pupil_data %<>%
- # rename(w5_bin1 = ebin1w5pt4_mean,
-  #       w5_bin2 = ebin2w5pt4_mean,
-   #      w5_bin3 = ebin3w5pt4_mean,
-    #     w5_bin4 = ebin4w5pt4_mean,
-     #    w5_bin5 = ebin5w5pt4_mean,
-      #   w5_bin6 = ebin6w5pt4_mean,
-       #  w5_bin7 = ebin7w5pt4_mean,
-        # w5_bin8 = ebin8w5pt4_mean,
-         #w5_bin9 = ebin9w5pt4_mean,
-         #w5_bin10 = ebin10w5pt4_mean,
-         #w5_bin11 = ebin11w5pt4_mean,
-         #w5_bin12 = ebin12w5pt4_mean,
-         #w5_bin13 = ebin13w5pt4_mean,
-         #w5_bin14 = ebin14w5pt4_mean,
-         #w5_bin15 = ebin15w5pt4_mean)
-
-#pupil_data %<>%
- # rename(w6_bin1 = ebin1w6pt4_mean,
-  #       w6_bin2 = ebin2w6pt4_mean,
-   #      w6_bin3 = ebin3w6pt4_mean,
-    #     w6_bin4 = ebin4w6pt4_mean,
-     #    w6_bin5 = ebin5w6pt4_mean,
-      #   w6_bin6 = ebin6w6pt4_mean,
-       #  w6_bin7 = ebin7w6pt4_mean,
-        # w6_bin8 = ebin8w6pt4_mean,
-         #w6_bin9 = ebin9w6pt4_mean,
-         #w6_bin10 = ebin10w6pt4_mean,
-         #w6_bin11 = ebin11w6pt4_mean,
-         #w6_bin12 = ebin12w6pt4_mean,
-         #w6_bin13 = ebin13w6pt4_mean,
-         #w6_bin14 = ebin14w6pt4_mean,
-         #w6_bin15 = ebin15w6pt4_mean)
-
-#pupil_data %<>%
- # rename(w7_bin1 = ebin1w7pt4_mean,
-  #       w7_bin2 = ebin2w7pt4_mean,
-   #      w7_bin3 = ebin3w7pt4_mean,
-    #     w7_bin4 = ebin4w7pt4_mean,
-     #    w7_bin5 = ebin5w7pt4_mean,
-      #   w7_bin6 = ebin6w7pt4_mean,
-       #  w7_bin7 = ebin7w7pt4_mean,
-        # w7_bin8 = ebin8w7pt4_mean,
-         #w7_bin9 = ebin9w7pt4_mean,
-         #w7_bin10 = ebin10w7pt4_mean,
-         #w7_bin11 = ebin11w7pt4_mean,
-         #w7_bin12 = ebin12w7pt4_mean,
-         #w7_bin13 = ebin13w7pt4_mean,
-         #w7_bin14 = ebin14w7pt4_mean,
-         #w7_bin15 = ebin15w7pt4_mean)
-
-#pupil_data %<>%
- # rename(w8_bin1 = ebin1w8pt4_mean,
-  #       w8_bin2 = ebin2w8pt4_mean,
-   #      w8_bin3 = ebin3w8pt4_mean,
-    #     w8_bin4 = ebin4w8pt4_mean,
-     #    w8_bin5 = ebin5w8pt4_mean,
-      #   w8_bin6 = ebin6w8pt4_mean,
-       #  w8_bin7 = ebin7w8pt4_mean,
-        # w8_bin8 = ebin8w8pt4_mean,
-         #w8_bin9 = ebin9w8pt4_mean,
-         #w8_bin10 = ebin10w8pt4_mean,
-         #w8_bin11 = ebin11w8pt4_mean,
-         #w8_bin12 = ebin12w8pt4_mean,
-         #w8_bin13 = ebin13w8pt4_mean,
-         #w8_bin14 = ebin14w8pt4_mean,
-         #w8_bin15 = ebin15w8pt4_mean)
-
-#pupil_data %<>%
- # rename(w9_bin1 = ebin1w9pt4_mean,
-  #       w9_bin2 = ebin2w9pt4_mean,
-   #      w9_bin3 = ebin3w9pt4_mean,
-    #     w9_bin4 = ebin4w9pt4_mean,
-     #    w9_bin5 = ebin5w9pt4_mean,
-      #   w9_bin6 = ebin6w9pt4_mean,
-       #  w9_bin7 = ebin7w9pt4_mean,
-        # w9_bin8 = ebin8w9pt4_mean,
-         #w9_bin9 = ebin9w9pt4_mean,
-         #w9_bin10 = ebin10w9pt4_mean,
-         #w9_bin11 = ebin11w9pt4_mean,
-         #w9_bin12 = ebin12w9pt4_mean,
-         #w9_bin13 = ebin13w9pt4_mean,
-         #w9_bin14 = ebin14w9pt4_mean,
-         #w9_bin15 = ebin15w9pt4_mean)
-
-#pupil_data %<>%
- # rename(w10_bin1 = ebin1w10pt4_mean,
-  #       w10_bin2 = ebin2w10pt4_mean,
-   #      w10_bin3 = ebin3w10pt4_mean,
-    #     w10_bin4 = ebin4w10pt4_mean,
-     #    w10_bin5 = ebin5w10pt4_mean,
-      #   w10_bin6 = ebin6w10pt4_mean,
-       #  w10_bin7 = ebin7w10pt4_mean,
-        # w10_bin8 = ebin8w10pt4_mean,
-         #w10_bin9 = ebin9w10pt4_mean,
-         #w10_bin10 = ebin10w10pt4_mean,
-         #w10_bin11 = ebin11w10pt4_mean,
-         #w10_bin12 = ebin12w10pt4_mean,
-         #w10_bin13 = ebin13w10pt4_mean,
-         #w10_bin14 = ebin14w10pt4_mean,
-         #w10_bin15 = ebin15w10pt4_mean)
-```
-
 ### Plot 1
-#### First attempt to plot pupil diameter as a function of time point (bin) at encoding of each word
-+ Fig. 4 in Miller, Gross, & Unsworth (2019).
-    + **Identification of the intended audience:** Scientific community
-    + **The intended message to be communicated:** When instructed to study a list of words, pupil diameter increases throughout the encoding period for each word. This increase in pupil dilation is believed to reflect an increase in the amount of attentional effort devoted to a given item.
+
+Here I plot changes in pupil diameter across the 3 second study/encoding phase for each word (i.e., bin).
+
+  + Fig. 4 in Miller, Gross, & Unsworth (2019).
+     + **Identification of the intended audience:** Scientific community
+     + **The intended message to be communicated:** When instructed to study a list of words, pupil diameter increases throughout the study phase for each word. This increase in pupil dilation is believed to reflect an increase in the amount of attentional effort devoted to a given item.
 
 ```{r tidy_data_plot1}
 
@@ -262,31 +95,55 @@ plot1_data <- pupil_data %>%
 
 ```
 
-```{r plot1, fig.height=3.5, fig.width=7, fig.align='center'}
+```{r plot1, fig.height=4, fig.width=7, fig.align='center'}
 
 plot1 <- plot1_data %>%
   group_by(bin) %>%
   summarise(mean_TEPR = mean(TEPR, na.rm = TRUE),
             sd_TEPR = sd(TEPR, na.rm = TRUE))
 
-plot1 <- rbind(plot1, "1st" = c(0, 0, 0)) %>% #this just makes the line begin at x = 0 and y = 0
-  ggplot(aes(x = bin, y = mean_TEPR)) +
-    geom_smooth(color = "#2DDADA") +
+plot1 <- rbind(plot1, "1st" = c(0, 0, 0)) #this just makes the line begin at x = 0 and y = 0
+
+# I want to model uncertainty with bootstrapping:
+row_samps <- rerun(100,
+      sample(seq_len(nrow(plot1)), 
+             nrow(plot1), 
+             replace = TRUE))
+
+# Extracting samples
+d_samps <- map_df(row_samps, ~plot1[., ], .id = "sample")
+
+# Plotting both data sources (my data and hypothetical/bootstrapped data)
+
+plot1 <- ggplot(plot1, aes(x = bin, y = mean_TEPR)) +
+    stat_smooth(aes(group = sample),
+              data = d_samps,
+              geom = "line",
+              color = "#2DDADA",
+              fullrange = TRUE,
+              size = 0.1) +
     theme_minimal() +
     theme(axis.title = element_text(face = "bold"),
           plot.title = element_text(face = "bold"),
           plot.caption = element_text(hjust = 0)) +
-      labs(caption = "Figure 1. Task evoked pupillary response across time of encoding period, which equated to a total of 3 seconds for 
-each to-be-remembered word.",
-           y = "Mean Pupillary Response (mm)",
+      labs(caption = "Figure 1. Task evoked pupillary response across the 3 second study (encoding) phase for each word",
+           y = "Mean Pupil Diameter (mm)",
            x = "Time (ms)") +
     scale_x_continuous(breaks = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),
                        labels = c("0", "200", "400", "600", "800", "1,000", "1,200", "1,400", "1,600", 
                                  "1,800", "2,000", "2,200", "2,400", "2,600", "2,800", "3,000"),
-                       limits = c(0, NA))
+                       limits = c(0, NA)) +
+    geom_text(y = 0.04,
+              x = 1.4,
+              color = "gray80",
+              label = "      To-be-remembered
+              word appears onscreen", size = 3, fontface = 2) +
+    geom_vline(aes(xintercept = 0),
+               color = "gray80", 
+               lty = "dashed")
 
-bbg_darktheme <- theme(panel.grid.major = element_line(colour = "gray30"), 
-                   panel.grid.minor = element_line(colour = "gray30"), 
+bbg_darktheme <- theme(panel.grid.major = element_line(colour = "gray20"), 
+                   panel.grid.minor = element_line(colour = "gray20"), 
                    axis.text = element_text(colour = "gray80"), 
                    axis.text.x = element_text(colour = "gray80"), 
                    axis.text.y = element_text(colour = "gray80"),
@@ -306,21 +163,49 @@ plot1 + bbg_darktheme
 
 ```
 
+```{r plot1_modifty_text, eval=FALSE, include=FALSE}
+
+####################################################################
+## NEED TO FIGURE OUT HOW TO SAVE FIGURE WITH  MODIFIED TEXT: 
+## WILL NOT GENERATE HTML WITH THIS CODE
+## TO REPRODUCE BELOW FIGURE, PEOPLE NEED TO INSTALL QUARTZ SOFTWARE
+####################################################################
+
+font_add_google('Encode Sans Condensed', "mld")
+font_add_google('Roboto', "se")
+
+showtext_auto()
+quartz()
+
+plot1 <- plot1 + theme(plot.caption = element_text(size = 11, family = "se"), 
+                       plot.title = element_text(size = 18, family = "mld"),
+                       axis.title = element_text(size = 12, family = "mld"), 
+                       axis.text.x = element_text(size = 10, family = "se"), 
+                       axis.text.y = element_text(size = 10, family = "se"))
+
+plot1 + bbg_darktheme
+
+```
+
 ### Plot 2
-#### First attempt to plot pupil diameter as a function of serial position for high WMC (*n* = 33) and low WMC (*n* = 31) individuals.
-+ Fig. 5 in Miller, Gross, & Unsworth (2019)
-    + **Identification of the intended audience:** Scientific community
-    + **The intended message to be communicated:** Different patterns of pupil dilation across serial positions emerge based on one's working memory capacity (WMC). Namely, for high WMC individuals (*n* = 33), pupil diameter **increases** as each new word is introduced during the learning phase of the task. Alternatively, for low WMC individuals (*n* = 31), pupil diameter **decreases** as each new word is introducted during learning.
+
+Here I plot pupil diameter as a function of serial position for high WMC (*n* = 33), medium WMC (*n* = 69) and low WMC (*n* = 31) individuals.
+
+  + Fig. 5 in Miller, Gross, & Unsworth (2019)
+      + **Identification of the intended audience:** Scientific community
+      + **The intended message to be communicated:** Different patterns of pupil dilation across serial positions emerge based on one's working memory capacity (WMC). Namely, for high WMC individuals (*n* = 33), pupil diameter **increases** as each new word is introduced during the learning phase of the task. Alternatively, for low WMC individuals (*n* = 31), pupil diameter **decreases** as each new word is introducted during learning.
     
 ```{r tidy_data_plot2, fig.height=5, fig.width=6.5, fig.align='center'}
 
+#Reordering factor levels for legend
 plot1_data$span_group <- factor(plot1_data$span_group, levels = c("Low", "Medium", "High"))
 
-plot2 <- plot1_data %>%
+plot2data <- plot1_data %>%
   group_by(word, span_group) %>%
   summarise(mean_TEPR = mean(TEPR, na.rm = TRUE),
-            sd_TEPR = sd(TEPR, na.rm = TRUE)) %>%
-  ggplot(aes(x = word, y = mean_TEPR, color = span_group)) +
+            se_TEPR = sundry::se(TEPR))
+
+plot2 <- ggplot(plot2data, aes(x = word, y = mean_TEPR, color = span_group)) +
     geom_smooth(size = 1.5) +
     scale_color_carto_d(palette = "Burg") +
     theme_minimal() +
@@ -329,7 +214,7 @@ plot2 <- plot1_data %>%
           plot.caption = element_text(hjust = 0)) +
     labs(caption = "Figure 2. Pupillary response across serial positions for low working memory capacity (WMC) individuals 
 (n = 31), medium WMC individuals (n = 69), and high WMC individuals (n = 33).",
-           y = "Pupillary Response (mm)",
+           y = "Mean Pupil Diameter (mm)",
            x = "Serial position",
            colour = "WMC") +
    scale_x_continuous(breaks = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
@@ -339,16 +224,49 @@ plot2 + bbg_darktheme
 
 ```
 
+Here I re-create the plot above but with geom_ribbon instead of geom_smooth.. I can't decide which approach is best.
+
+```{r plot2_geom_ribbon, fig.height=5, fig.width=6.5, fig.align='center'}
+
+#my_colors = carto_pal(3, "Burg")
+#my_colors
+
+plot2.2 <- ggplot(plot2data, aes(x = word, y = mean_TEPR, color = span_group)) +
+    geom_ribbon(aes(ymin = mean_TEPR - 1.96*se_TEPR, 
+                    ymax = mean_TEPR + 1.96*se_TEPR,
+                    color = span_group),
+                alpha = 0.7) +
+    scale_color_carto_d(palette = "Burg") +
+    theme_minimal() +
+    theme(axis.title = element_text(face = "bold"),
+          plot.title = element_text(face = "bold"),
+          plot.caption = element_text(hjust = 0)) +
+    labs(caption = "Figure 2. Pupillary response across serial positions for low working memory capacity (WMC) individuals 
+(n = 31), medium WMC individuals (n = 69), and high WMC individuals (n = 33).",
+           y = "Mean Pupil Diameter (mm)",
+           x = "Serial position",
+           colour = "WMC") +
+   scale_x_continuous(breaks = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
+                       labels = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10")) 
+
+plot2.2 + bbg_darktheme
+
+```
+
 ### Plot 3
-#### First attempt to plot pupil diameter as a function of serial position and bin (time across encoding period) for low WMC (*n* = 31) and high WMC (*n* = 33) individuals. Serial position was broken down into Primacy (items 1–3), Mid (items 4–7), and Recency (items 8–10) for graphical purposes only.
+
+Now I will attempt to plot pupil diameter as a function of serial position and bin (time across the 3 second study phase for each word) based on one's WMC. Serial position was broken down into Primacy (words 1–3), Mid (words 4–7), and Recency (words 8–10) for graphical purposes only.
+
 + Fig. 6 in Miller, Gross, & Unsworth (2019)
     + **Identification of the intended audience:** Scientific community
     + **The intended message to be communicated:** This figure essentially conveys the same information as the figure above. For high WMC individuals, pupil dilation continues to gradually increase throughout the encoding period for all serial positions, with primacy items (the first few words presented during list presentation; words 1-3) displaying smaller dilations than mid (words 4–7) and recency items (the last few words presented during list presentation; words 8–10). Conversely, low WMC individuals show moderate increases in dilation that appear to plateau near the middle of the encoding period. Moreover, pupil dilation appears to be largest for primacy items and smallest for recency items, despite a gradual increase in dilation for recency items.
 
 ```{r plot3_tidy1, fig.align='center'}
 
+# Converting word # to factors
 plot1_data$word <- as.factor(plot1_data$word)
 
+# Breaking down words into primacy, mid, and recency items
 plot3_data <- plot1_data %>% 
   mutate(word = recode(word, '1' = "Primacy Items",
                              '2' = "Primacy Items",
@@ -379,7 +297,7 @@ plot3 <- plot3_data %>%
       labs(caption = "Figure 3. Pupil diameter as a function of serial position and time across encoding period for low WMC (n = 31), medium WMC 
 (n = 69), and high WMC (n = 33) individuals. Serial position was broken down into Primacy (words 1–3), Mid (words 4–7), 
 and Recency (words 8–10) for graphical purposes only.",
-           y = "Mean Pupillary Response (mm)",
+           y = "Mean Pupil Diameter (mm)",
            x = "Time (ms)",
            colour = "WMC") +
       scale_x_continuous(breaks = c(0, 2, 4, 6, 8, 10, 12, 14),
@@ -393,7 +311,7 @@ plot3 + bbg_darktheme
 
 ```
 
-For the original figure in Miller, Gross, and Unsworth, I faceted by WMC rather than serial position. Let's try to re-create that plot and compare (note, I prefer the above where I facet by serial position):
+For the original figure in Miller, Gross, and Unsworth, I faceted by WMC rather than serial position. Let's try to re-create that plot and compare (note, I think I prefer the above where I facet by serial position):
 
 ```{r plot3_version2, fig.align='center'}
 
@@ -415,7 +333,7 @@ plot3.2 <- plot3_data %>%
       labs(caption = "Figure 3. Pupil diameter as a function of serial position and time across encoding period for low WMC (n = 31), medium WMC 
 (n = 69), and high WMC (n = 33) individuals. Serial position was broken down into Primacy (words 1–3), Mid (words 4–7), 
 and Recency (words 8–10) for graphical purposes only.",
-           y = "Mean Pupillary Response (mm)",
+           y = "Mean Pupil Diameter (mm)",
            x = "Time (ms)",
            colour = "Serial Position") +
       scale_x_continuous(breaks = c(0, 2, 4, 6, 8, 10, 12, 14),
@@ -430,11 +348,79 @@ plot3.2 + bbg_darktheme
 ```
 
 ### Plot 4
-#### First attempt to plot relation between recall accuracy and strategy type   
-+ **Identification of the intended audience:** General public
-+ **The intended message to be communicated:** Strategies that rely on more elaborative mental processes are associated with better memory performance
 
-```{r plot4}
+Here I attempt to plot relation between recall accuracy and strategy type.
+
+  + **Identification of the intended audience:** General public
+  + **The intended message to be communicated:** Strategies that rely on more elaborative mental processes are associated with better memory performance
+
+```{r plot4, fig.align='center'}
+
+strategy_data <- data %>%
+  select(-sp1_acc:-sp10_acc,
+         -ospan:-span_group,
+         -passive_read_strat:-other_strat,
+         -primacy_recall:-ebin15w10pt4_mean) %>%
+  gather(key = strat_type, value = score, ineffective:effective)
+
+strategy_data %<>%
+  filter(score != "NA") %>%
+  mutate(strat_type = as.factor(strat_type),
+         score = as.factor(score)) 
+
+strategy_data%<>%
+  group_by(strat_type, score) %>%
+  summarise(mean_acc = mean(accuracy_mean, na.rm = TRUE),
+            se_acc = sundry::se(accuracy_mean))
+
+#str(strategy_data)
+#levels(as.factor(strategy_data$score))
+
+strategy_data %<>%
+  mutate(score = recode(score,
+                          #Codes for effective strategies
+                          "0" = "None",
+                          "0.333333333333333" = "Low", 
+                          "0.666666666666667" = "Moderate", 
+                          "1" = "High",
+                          #Codes for ineffective strategies
+                          "0.5" = "Moderate"))
+
+plot4 <- strategy_data %>%
+  filter(strat_type == "effective") %>%
+  mutate(score = fct_reorder(score, mean_acc))
+
+plot4 <- ggplot(plot4, aes(score, mean_acc)) +
+    geom_col(width = 0.80, 
+             fill = "#2DDADA",
+             color = "#02777A",
+             alpha = 0.6) +
+    geom_errorbar(aes(ymin = mean_acc + qnorm(0.025)*se_acc, 
+                      ymax = mean_acc + qnorm(0.975)*se_acc),
+                      color = "gray40",
+                      width = 0.4, 
+                      size = 0.8) +
+    geom_text(aes(score, mean_acc, label = paste0(round(mean_acc*100), "%")),
+            nudge_y = 0.15,
+            size = 3,
+            color = "gray80") +
+    theme_minimal() +
+    theme(axis.title = element_text(face = "bold"),
+          plot.title = element_text(face = "bold", size = 12),
+          plot.caption = element_text(hjust = 0),
+          axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)),  
+          #increases space between x axis label and x axis values
+          axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0))) + 
+          #increases space between y axis label and y axis values
+      labs(title = "Mean recall accuracy as a function of effective strategy use",
+           y = "Recall Accuracy",
+           x = "Effective Strategy Use") +
+    scale_y_continuous(breaks = c(0, 0.2, 0.4, 0.6, 0.8, 1.0),
+                       labels = c("0%", "20%", "40%", "60%", "80%", "100%"),
+                       limits = c(0, 1.0)) +
+  coord_flip()
+
+plot4 + bbg_darktheme
 
 ```
 
