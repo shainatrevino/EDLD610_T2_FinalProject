@@ -14,15 +14,29 @@ editor_options:
 
 ```{r setup, include=FALSE}
 
-# set knitr options
+# Set knitr options
 knitr::opts_chunk$set(echo = TRUE,
                       message = FALSE,
                       warning = FALSE,
                       fig.width = 7.5,
                       fig.height = 4.5)
 
-# load packages
+# Load packages
 #devtools::install_github("datalorax/sundry")
+#devtools::install_github("wilkelab/ungeviz")
+#install.packages("pkgconfig")
+#install.packages("rio")
+#install.packages("here")
+#install.packages("tidyverse")
+#install.packages("magrittr")
+#install.packages("ggforce")
+#install.packages("rcartocolor")
+#install.packages("showtext")
+#install.packages("gganimate")
+#install.packages("glue")
+#install.packages("mgcv")
+#install.packages("transformr")
+
 library(pkgconfig)
 library(rio)
 library(here)
@@ -30,8 +44,6 @@ library(tidyverse)
 library(magrittr)
 library(ggforce)
 library(rcartocolor)
-library(cowplot)
-library(sundry)
 library(showtext)
 library(sundry)
 library(ungeviz)
@@ -40,7 +52,7 @@ library(glue)
 library(mgcv)
 library(transformr)
 
-# disable scientific notation
+# Disable scientific notation
 options(scipen = 999)
 
 ```
@@ -58,7 +70,7 @@ data <- import(here("data", "DeIntentifiedJML2019Data_Exp1.sav"),
 
 ```{r tidy_rename}
 
-#select variables of interest for pupil data
+# Select variables of interest for pupil data
 pupil_data <- data %>%
   select(-sp1_acc:-symspan, 
          -ineffective:-recency_recall,
@@ -79,7 +91,7 @@ pupil_data %<>%
 
 ```
 
-*Please note that the following figures use dimensions appropriate for a knitted html document*
+*Please note that for the following figures, I specified dimensions appropriate for a knitted html document*
 
 ### Plot 1
 
@@ -91,6 +103,7 @@ Here I plot changes in pupil diameter across the 3 second study/encoding phase f
 
 ```{r tidy_data_plot1}
 
+# Tidy data:
 plot1_data <- pupil_data %>%
   gather(key = word_bin, value = TEPR, w1_bin1:w10_bin15) %>%
   separate(word_bin, c("word", "bin"), sep = "_") %>%
@@ -107,9 +120,10 @@ plot1_data <- pupil_data %>%
 plot1 <- plot1_data %>%
   group_by(bin) %>%
   summarise(mean_TEPR = mean(TEPR, na.rm = TRUE),
-            sd_TEPR = sd(TEPR, na.rm = TRUE))
+            se_TEPR = sundry::se(TEPR))
 
-plot1 <- rbind(plot1, "1st" = c(0, 0, 0)) #this just makes the line begin at x = 0 and y = 0
+# This just makes the line begin at x = 0 and y = 0
+plot1 <- rbind(plot1, "1st" = c(0, 0, 0)) 
 
 # I want to model uncertainty with bootstrapping:
 row_samps <- rerun(100,
@@ -121,7 +135,6 @@ row_samps <- rerun(100,
 d_samps <- map_df(row_samps, ~plot1[., ], .id = "sample")
 
 # Plotting both data sources (my data and hypothetical/bootstrapped data)
-
 plot1 <- ggplot(plot1, aes(x = bin, y = mean_TEPR)) +
     stat_smooth(aes(group = sample),
               data = d_samps,
@@ -130,42 +143,51 @@ plot1 <- ggplot(plot1, aes(x = bin, y = mean_TEPR)) +
               fullrange = TRUE,
               size = 0.1) +
     theme_minimal() +
+    # Bold title and axes; left-align caption
     theme(axis.title = element_text(face = "bold"),
           plot.title = element_text(face = "bold"),
           plot.caption = element_text(hjust = 0)) +
-      labs(caption = "Figure 1. Task evoked pupillary response across the 3 second study (encoding) phase for each word",
+    # Change labels
+    labs(caption = "Figure 1. Task evoked pupillary response across the 3 second study (encoding) phase for each word",
            y = "Mean Pupil Diameter (mm)",
            x = "Time (ms)") +
-    scale_x_continuous(breaks = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),
-                       labels = c("0", "200", "400", "600", "800", "1,000", "1,200", "1,400", "1,600", 
-                                 "1,800", "2,000", "2,200", "2,400", "2,600", "2,800", "3,000"),
+    # Relabel x axis values to make more sense to reader
+    scale_x_continuous(breaks = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 
+                                  9, 10, 11, 12, 13, 14, 15),
+                       labels = c("0", "200", "400", "600", "800", "1,000", 
+                                  "1,200", "1,400", "1,600", "1,800", "2,000", 
+                                  "2,200", "2,400", "2,600", "2,800", "3,000"),
                        limits = c(0, NA)) +
+    # Add text specifying when stimuli appear onscreen
     geom_text(y = 0.04,
               x = 1.4,
               color = "gray80",
               label = "      To-be-remembered
               word appears onscreen", size = 3, fontface = 2) +
+    # Add dotted vertical line at x = 0
     geom_vline(aes(xintercept = 0),
                color = "gray80", 
                lty = "dashed")
 
+# Creating my own theme
 bbg_darktheme <- theme(panel.grid.major = element_line(colour = "gray20"), 
                    panel.grid.minor = element_line(colour = "gray20"), 
                    axis.text = element_text(colour = "gray80"), 
                    axis.text.x = element_text(colour = "gray80"), 
                    axis.text.y = element_text(colour = "gray80"),
-                   axis.title = element_text(colour = "gray80"),
+                   axis.title = element_text(colour = "gray80", face = "bold"),
                    legend.text = element_text(colour = "gray80"), 
                    legend.title = element_text(colour = "gray80"), 
                    plot.subtitle = element_text(colour = "gray80"),
-                   strip.text = element_text(colour = "gray80"),
+                   strip.text = element_text(colour = "gray80", face = "bold"),
                    panel.background = element_rect(fill = "gray10"),                     
                    plot.background = element_rect(fill = "gray10"), 
                    legend.background = element_rect(fill = NA, color = NA), 
                    plot.margin = margin(10, 10, b = 20, 10),
                    plot.caption = element_text(colour = "gray80", vjust = 1), 
-                   plot.title = element_text(colour = "gray80"))
+                   plot.title = element_text(colour = "gray80", face = "bold"))
 
+# Apply my theme to plot
 plot1 + bbg_darktheme
 
 ```
@@ -205,13 +227,15 @@ Here I plot pupil diameter as a function of serial position for high WMC (*n* = 
 ```{r tidy_data_plot2, fig.height=5, fig.width=6.5, fig.align='center'}
 
 #Reordering factor levels for legend
-plot1_data$span_group <- factor(plot1_data$span_group, levels = c("Low", "Medium", "High"))
+plot1_data$span_group <- factor(plot1_data$span_group, 
+                                levels = c("Low", "Medium", "High"))
 
 plot2data <- plot1_data %>%
   group_by(word, span_group) %>%
   summarise(mean_TEPR = mean(TEPR, na.rm = TRUE),
             se_TEPR = sundry::se(TEPR))
 
+# Rename variable for legend
 plot2data %<>% 
   rename("WMC" = `span_group`)
 
@@ -222,16 +246,18 @@ plot2 <- ggplot(plot2data, aes(x = word, y = mean_TEPR)) +
                     alpha = 0.4) +
     scale_fill_carto_d(palette = "Burg") +
     theme_minimal() +
-    theme(axis.title = element_text(face = "bold"),
-          plot.title = element_text(face = "bold"),
-          plot.caption = element_text(hjust = 0)) +
+    # Left-align caption
+    theme(plot.caption = element_text(hjust = 0)) +
+    # Change labels
     labs(caption = "Figure 2. Pupillary response across serial positions for low working memory capacity (WMC) individuals 
 (n = 31), medium WMC individuals (n = 69), and high WMC individuals (n = 33).",
            y = "Mean Pupil Diameter (mm)",
            x = "Serial position",
            colour = "WMC") +
+   # Relabel x axis values to make more sense to reader
    scale_x_continuous(breaks = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
-                       labels = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10")) 
+                      labels = c("1", "2", "3", "4", "5", 
+                                 "6", "7", "8", "9", "10")) 
 
 plot2 + bbg_darktheme
 
@@ -266,36 +292,43 @@ plot3_data <- plot1_data %>%
 plot3 <- plot3_data %>%
   group_by(word, bin, span_group) %>%
   summarise(mean_TEPR = mean(TEPR, na.rm = TRUE),
-            sd_TEPR = sd(TEPR, na.rm = TRUE))
+            se_TEPR = sundry::se(TEPR))
 
 plot3 <- ggplot(plot3, aes(x = bin, y = mean_TEPR, colour = span_group)) +
-      geom_point() +
+      geom_point(size = 0.8) +
+      # Generate outcome draws from a fitted model
       stat_smooth_draws(times = 10,
                         aes(group = interaction(stat(.draw), colour)),
-                        size = 1.5) +
+                        size = 0.8) +
       scale_color_carto_d(palette = "Burg") +
+      # Create seperate plotss for Primacy, Mid, and Recency Items
       facet_wrap(~word) +
+      # Specifying sampled draws in addition to the animated lines
       transition_states(stat(.draw), 1, 2) +
       enter_fade() + exit_fade() +
       shadow_mark(future = TRUE, size = 0.25, color = "gray50", alpha = 1/4) +
       theme_minimal() +
-      theme(axis.title = element_text(face = "bold"),
-            axis.text.x = element_text(angle = 45, hjust = 1),
-            plot.title = element_text(face = "bold"),
+      # Rotate x axis values so they are angled; center subtitle
+      # Left-align caption
+      theme(axis.text.x = element_text(angle = 45, hjust = 1),
             plot.caption = element_text(hjust = 0),
-            plot.subtitle = element_text(face = "bold", hjust = 0.5),
-            strip.text = element_text(face = "bold")) +
+            plot.subtitle = element_text(face = "bold", hjust = 0.5)) +
+      # Change labels
       labs(caption = "Figure 3. Pupil diameter as a function of serial position and time across encoding period for low WMC (n = 31), medium WMC 
 (n = 69), and high WMC (n = 33) individuals. Serial position was broken down into Primacy (words 1–3), Mid (words 4–7), 
 and Recency (words 8–10) for graphical purposes only.",
            y = "Mean Pupil Diameter (mm)",
            x = "Time (ms)",
            colour = "WMC") +
+      # Adjust/Relabel x axis values to make more sense to reader
       scale_x_continuous(breaks = c(0, 2, 4, 6, 8, 10, 12, 14),
-                         labels = c("0", "400", "800", "1,200", "1,600", "2,000", "2,400","2,800"),
+                         labels = c("0", "400", "800", "1,200", 
+                                    "1,600", "2,000", "2,400","2,800"),
                          limits = c(0, NA)) +
+      # Adjust/Relabel y axis values to make more sense to reader
       scale_y_continuous(breaks = c(-0.10, -0.05, 0.00, 0.05, 0.10, 0.15),
-                         label = c("-0.10", "-0.05", "0.00", "0.05", "0.10", "0.15"),
+                         label = c("-0.10", "-0.05", "0.00", 
+                                   "0.05", "0.10", "0.15"),
                          limits = c(-0.10, 0.15))
 
 plot3 + bbg_darktheme
@@ -309,75 +342,86 @@ Here I attempt to plot relation between recall accuracy and strategy type.
   + **Identification of the intended audience:** General public
   + **The intended message to be communicated:** Strategies that rely on more elaborative mental processes are associated with better memory performance
 
-```{r plot4, fig.align='center'}
+```{r plot4, fig.height = 5, fig.align='center'}
 
+# Select variables of interest
 strategy_data <- data %>%
   select(-sp1_acc:-sp10_acc,
          -ospan:-span_group,
-         -passive_read_strat:-other_strat,
          -primacy_recall:-ebin15w10pt4_mean) %>%
-  gather(key = strat_type, value = score, ineffective:effective)
+  gather(key = strat_type, value = response, passive_read_strat:other_strat)
 
+# Filter out NAs, and convert strategy type and score to factors
 strategy_data %<>%
-  filter(score != "NA") %>%
+  filter(response != "NA") %>%
   mutate(strat_type = as.factor(strat_type),
-         score = as.factor(score)) 
+         response = as.factor(response)) 
 
-strategy_data%<>%
-  group_by(strat_type, score) %>%
+#levels(as.factor(strategy_data$strat_type))
+
+# Recode variables for graph
+strategy_data %<>%
+  mutate(strat_type = recode(strat_type,
+                             "grouping_strat" = "Grouping",
+                             "imagery_strat" = "Imagery",
+                             "other_strat" = "Other",
+                             "passive_read_strat" = "Passive Reading",
+                             "rehearsal_strat" = "Rote Rehearsal",
+                             "sentence_gen_strat" = "Sentence Generation")) %>%
+  group_by(strat_type, response) %>%
   summarise(mean_acc = mean(accuracy_mean, na.rm = TRUE),
             se_acc = sundry::se(accuracy_mean))
 
-#str(strategy_data)
-#levels(as.factor(strategy_data$score))
-
-strategy_data %<>%
-  mutate(score = recode(score,
-                          #Codes for effective strategies
-                          "0" = "None",
-                          "0.333333333333333" = "Low", 
-                          "0.666666666666667" = "Moderate", 
-                          "1" = "High",
-                          #Codes for ineffective strategies
-                          "0.5" = "Moderate"))
+# Specify factor levels
+# Effective strategies = imagery, sentence generation, and grouping
+# Ineffective strategies = rehearsal and passive reading
+strategy_data$strat_type <- factor(strategy_data$strat_type, 
+                                levels = c("Imagery", 
+                                           "Sentence Generation", 
+                                           "Grouping",
+                                           "Rote Rehearsal", 
+                                           "Passive Reading", 
+                                           "Other"))
 
 plot4 <- strategy_data %>%
-  filter(strat_type == "effective") %>%
-  mutate(score = fct_reorder(score, mean_acc))
+  #filter out other and grouping strategy
+  filter(strat_type != "Other" & strat_type != "Grouping") %>%
+  ggplot(aes(response, mean_acc, fill = response)) +
+      geom_col(width = 0.60, 
+               alpha = 0.6) +
+      geom_errorbar(aes(ymin = mean_acc + qnorm(0.025)*se_acc, 
+                          ymax = mean_acc + qnorm(0.975)*se_acc),
+                          color = "gray40",
+                          width = 0.4, 
+                          size = 0.8) +
+      # Print accuracy associated with each condition
+      geom_text(aes(response, mean_acc, label = paste0(round(mean_acc*100), "%")),
+                nudge_y = 0.15, # Specifies how high above bar text appears
+                size = 3,
+                color = "gray80") +
+      # Provide seperate graphs for each strategy
+      facet_wrap(~strat_type) +
+      scale_fill_carto_d(palette = "Burg") +
+      theme_minimal() +
+      # Delete legend and left-align caption
+      theme(legend.position="none",
+            plot.caption = element_text(hjust = 0)) +
+      #Modify labels
+      labs(title = "Recall Accuracy as a Function of Strategy Type and Use of Strategy",
+               y = "Mean Recall Accuracy",
+               x = "",
+               caption = "'No' represents individuals who did not report using given strategy, whereas 'Yes' represents whose who used said strategy. 
+Note that performance is actually better when people report not using a normatively ineffective strategy (e.g., rote rehearsal 
+or passive reading) than when they report using these strategies.") +
+      # Rename labels on x-axis
+      scale_x_discrete(breaks = c(0, 1),
+                       labels = c("No", "Yes")) +
+      # Modify names/range of y-axis 
+      scale_y_continuous(breaks = c(0, 0.2, 0.4, 0.6, 0.8),
+                         labels = c("0%", "20%", "40%", "60%", "80%"),
+                         limits = c(0, 0.8))
 
-plot4 <- ggplot(plot4, aes(score, mean_acc)) +
-    geom_col(width = 0.80, 
-             fill = "#2DDADA",
-             color = "#02777A",
-             alpha = 0.6) +
-    geom_errorbar(aes(ymin = mean_acc + qnorm(0.025)*se_acc, 
-                      ymax = mean_acc + qnorm(0.975)*se_acc),
-                      color = "gray40",
-                      width = 0.4, 
-                      size = 0.8) +
-    geom_text(aes(score, mean_acc, label = paste0(round(mean_acc*100), "%")),
-            nudge_y = 0.15,
-            size = 3,
-            color = "gray80") +
-    theme_minimal() +
-    theme(axis.title = element_text(face = "bold"),
-          plot.title = element_text(face = "bold", size = 12),
-          plot.caption = element_text(hjust = 0),
-          axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)),  
-          #increases space between x axis label and x axis values
-          axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0))) + 
-          #increases space between y axis label and y axis values
-      labs(title = "Recall accuracy as a function of proportion of effective strategies reported",
-           y = "Mean Recall Accuracy",
-           x = "Effective Strategy Use",
-           caption = "Note. High effective strategy use represents individuas who reported using all of the possible effective study strategies 
-(e.g., interactive imagery, semantic reference, and sentence generation), whereas Moderate corresponds to individuals
-who reported using two of these strategies, and Low represents those who reported one of these strategies.") +
-    scale_y_continuous(breaks = c(0, 0.2, 0.4, 0.6, 0.8, 1.0),
-                       labels = c("0%", "20%", "40%", "60%", "80%", "100%"),
-                       limits = c(0, 1.0)) +
-  coord_flip()
-
+# Applying my theme to plot
 plot4 + bbg_darktheme
 
 ```
