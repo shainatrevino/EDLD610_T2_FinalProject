@@ -36,6 +36,7 @@ knitr::opts_chunk$set(echo = TRUE,
 #install.packages("glue")
 #install.packages("mgcv")
 #install.packages("transformr")
+#install.packages("RColorBrewer")
 
 library(pkgconfig)
 library(rio)
