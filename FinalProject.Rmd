@@ -196,6 +196,9 @@ plot1 + bbg_darktheme
 
 ```{r plot1_modifty_text, eval=FALSE, include=FALSE}
 
+#For peer review, you can ignore this section
+#As of right now I am not using it, which is why eval and include = FALSE
+
 ####################################################################
 ## NEED TO FIGURE OUT HOW TO SAVE FIGURE WITH  MODIFIED TEXT: 
 ## WILL NOT GENERATE HTML WITH THIS CODE
