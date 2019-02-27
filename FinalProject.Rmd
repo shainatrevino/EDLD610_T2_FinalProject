@@ -51,13 +51,14 @@ library(gganimate)
 library(glue)
 library(mgcv)
 library(transformr)
+library(RColorBrewer)
 
 # Disable scientific notation
 options(scipen = 999)
 
 ```
 
-The following dataset is de-identified and already hosted on Github. The data come from one of my recent publications (Experiment 1; Miller, Gross, & Unsworth, 2019). In this paper, pupil dilation was used as an online indicator of the intensity of attention to determine whether variation in attention at encoding relates to individual differences in working memory capacity (WMC) and long-term memory (LTM) performance. Participants (*N* = 138) completed a battery of complex span working memory tasks, followed by a delayed free recall task while pupil dilation was simultaneously recorded.
+The following dataset is de-identified and already hosted on Github. The data come from one of my recent publications (Experiment 1; Miller, Gross, & Unsworth, 2019). In this paper, pupil dilation was used as an index of the intensity of attention to determine if variation in attention at encoding partially accounts for the relation between working memory capacity (WMC) and long-term memory (LTM). Participants (*N* = 138) completed a battery of complex span working memory tasks, followed by a delayed free recall task while pupil dilation was simultaneously recorded.
 
 ```{r load_data}
 
@@ -92,7 +93,7 @@ pupil_data %<>%
 ```
 
 *Please note that for the following figures, I specified dimensions appropriate for a knitted html document.*
-*Also, just a heads up that it will probably take at least 5 minutes to generate the html because of the animated plots!*
+*Also, for those trying to reproduce this document, just a heads up that it will probably take at least 5 minutes to generate the html because of the animated plots!*
 
 ### Plot 1
 
@@ -240,12 +241,16 @@ plot2data <- plot1_data %>%
 plot2data %<>% 
   rename("WMC" = `span_group`)
 
+#Specify colors for my own color palette
+vapor_wave <- c("violetred4", "pink", "turquoise4")
+
 plot2 <- ggplot(plot2data, aes(x = word, y = mean_TEPR)) +
     geom_ribbon(aes(ymin = mean_TEPR - 1.96*se_TEPR, 
                     ymax = mean_TEPR + 1.96*se_TEPR,
                     fill = WMC),
                     alpha = 0.4) +
-    scale_fill_carto_d(palette = "Burg") +
+    scale_fill_manual(values = vapor_wave) +
+    #scale_fill_carto_d(palette = "Burg") +
     theme_minimal() +
     # Left-align caption
     theme(plot.caption = element_text(hjust = 0)) +
@@ -301,7 +306,8 @@ plot3 <- ggplot(plot3_data, aes(x = bin, y = mean_TEPR, colour = span_group)) +
       stat_smooth_draws(times = 10,
                         aes(group = interaction(stat(.draw), colour)),
                         size = 0.8) +
-      scale_color_carto_d(palette = "Burg") +
+      scale_color_manual(values = vapor_wave) +
+      #scale_color_carto_d(palette = "Burg") +
       # Create seperate plots for Primacy, Mid, and Recency Items
       facet_wrap(~word) +
       # Specifying sampled draws in addition to the animated lines
@@ -338,7 +344,7 @@ plot3 + bbg_darktheme
 
 Above I faceted by serial position (primacy, mid, recency). In Miller et al. (2019), I actually faceted by WMC (low, mid, high). I honestly don't know which method I prefer. For comparision sake, let's try to reproduce the plot faceting by WMC:
 
-  + Remember, the point this graph is trying to make is that when instructed to study a list of words for a later test, two factors influence the trajectory of pupil dilation across the study phase: (1) one's WMC and (2) serial position. For high WMC individuals, pupil dilation continues to gradually increase throughout the encoding period for all serial positions, with primacy items (the first few words presented during list presentation; words 1-3) displaying smaller dilations than mid (words 4–7) and recency items (the last few words presented during list presentation; words 8–10). Conversely, low WMC individuals show moderate increases in dilation that appear to plateau near the middle of the encoding period. Moreover, pupil dilation appears to be largest for primacy items and smallest for recency items, despite a gradual increase in dilation for recency items.
+  + Remember, the point this graph is trying to make is that when instructed to study a list of words for a later test, two factors seem to influence how attention is allocated across the study phase (as indexed via pupil dilation): (1) one's WMC and (2) serial position. For high WMC individuals, pupil dilation continues to gradually increase throughout the encoding period for all serial positions, with primacy items (the first few words presented during list presentation; words 1-3) displaying smaller dilations than mid (words 4–7) and recency items (the last few words presented during list presentation; words 8–10). Conversely, low WMC individuals show moderate increases in dilation that appear to plateau near the middle of the encoding period. Moreover, pupil dilation appears to be largest for primacy items and smallest for recency items, despite a gradual increase in dilation for recency items.
 
 ```{r plot3.2_newfacet, fig.align='center'}
 
@@ -361,7 +367,8 @@ plot3.2 <- ggplot(plot3_data, aes(x = bin, y = mean_TEPR, colour = word)) +
       stat_smooth_draws(times = 10,
                         aes(group = interaction(stat(.draw), colour)),
                         size = 0.8) +
-      scale_color_carto_d(palette = "Burg") +
+      scale_color_manual(values = vapor_wave) +
+      #scale_color_carto_d(palette = "Burg") +
       # Create seperate plots for people with low, mid, and high WMC
       facet_wrap(~span_group) +
       # Specifying sampled draws in addition to the animated lines
