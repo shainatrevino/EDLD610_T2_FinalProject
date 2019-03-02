@@ -67,6 +67,7 @@ data <- import(here("data", "DeIntentifiedJML2019Data_Exp1.sav"),
                setclass = "tibble") %>% 
   characterize() %>%
   janitor::clean_names()
+#ST minor note: it is also possible to import the data directly from your github using a link instead of putting the file in your project
 
 ```
 
@@ -90,6 +91,7 @@ pupil_data %<>%
         "_",
         str_extract(., "bin\\d{1,2}"),
         sep = "")))
+#ST this code seems very efficient!! I don't really know what is going on here, but great job!!
 
 ```
 
@@ -124,9 +126,10 @@ plot1 <- plot1_data %>%
   group_by(bin) %>%
   summarise(mean_TEPR = mean(TEPR, na.rm = TRUE),
             se_TEPR = sundry::se(TEPR))
+#ST I have never seen this package for calculating se, I usually do it in multiple steps. I will be using this in the future - thanks!
 
 # This just makes the line begin at x = 0 and y = 0
-plot1 <- rbind(plot1, "1st" = c(0, 0, 0)) 
+plot1 <- rbind(plot1, "1st" = c(0, 0, 0)) #ST I didn't know you could do this. Very efficient. 
 
 # I want to model uncertainty with bootstrapping:
 row_samps <- rerun(100,
@@ -144,12 +147,10 @@ plot1 <- ggplot(plot1, aes(x = bin, y = mean_TEPR)) +
               geom = "line",
               color = "#2DDADA",
               fullrange = TRUE,
-              size = 0.1) +
-    theme_minimal() +
-    # Bold title and axes; left-align caption
-    theme(axis.title = element_text(face = "bold"),
-          plot.title = element_text(face = "bold"),
-          plot.caption = element_text(hjust = 0)) +
+              size = 0.1, 
+              alpha = .5) + #ST added some transparency for lines so you can see overlap better
+    theme_minimal() + #ST You shouldn't need to set theme minimal here since you set it in your global chunk options above
+    #ST moved theme function to below theme function
     # Change labels
     labs(caption = "Figure 1. Task evoked pupillary response across the 3 second study (encoding) phase for each word",
            y = "Mean Pupil Diameter (mm)",
@@ -166,7 +167,9 @@ plot1 <- ggplot(plot1, aes(x = bin, y = mean_TEPR)) +
               x = 1.4,
               color = "gray80",
               label = "      To-be-remembered
-              word appears onscreen", size = 3, fontface = 2) +
+              word appears onscreen", 
+              size = 3, #ST I would increase the size of this text
+              fontface = 2) +
     # Add dotted vertical line at x = 0
     geom_vline(aes(xintercept = 0),
                color = "gray80", 
@@ -187,12 +190,13 @@ bbg_darktheme <- theme(panel.grid.major = element_line(colour = "gray20"),
                    plot.background = element_rect(fill = "gray10"), 
                    legend.background = element_rect(fill = NA, color = NA), 
                    plot.margin = margin(10, 10, b = 20, 10),
-                   plot.caption = element_text(colour = "gray80", vjust = 1), 
+                   plot.caption = element_text(colour = "gray80", vjust = 1, hjust = 0), 
                    plot.title = element_text(colour = "gray80", face = "bold"))
 
 # Apply my theme to plot
 plot1 + bbg_darktheme
 
+#ST Love the way the dark theme looks! great job! I would play around more with the transparency since there is so much overlap.
 ```
 
 ```{r plot1_modifty_text, eval=FALSE, include=FALSE}
@@ -246,7 +250,7 @@ plot2data %<>%
   rename("WMC" = `span_group`)
 
 #Specify colors for my own color palette
-vapor_wave <- c("violetred4", "pink", "turquoise4")
+vapor_wave <- c("violetred4", "pink", "turquoise4") #ST I love how you created this vector to use to scale fill - I will be using this.
 
 plot2 <- ggplot(plot2data, aes(x = word, y = mean_TEPR)) +
     geom_ribbon(aes(ymin = mean_TEPR - 1.96*se_TEPR, 
@@ -255,9 +259,8 @@ plot2 <- ggplot(plot2data, aes(x = word, y = mean_TEPR)) +
                     alpha = 0.4) +
     scale_fill_manual(values = vapor_wave) +
     #scale_fill_carto_d(palette = "Burg") +
-    theme_minimal() +
     # Left-align caption
-    theme(plot.caption = element_text(hjust = 0)) +
+    #ST added caption setting to dark theme instead of specifying again
     # Change labels
     labs(caption = "Figure 2. Pupillary response across serial positions for low working memory capacity (WMC) individuals 
 (n = 31), medium WMC individuals (n = 69), and high WMC individuals (n = 33).",
@@ -270,6 +273,7 @@ plot2 <- ggplot(plot2data, aes(x = word, y = mean_TEPR)) +
                                  "6", "7", "8", "9", "10")) 
 
 plot2 + bbg_darktheme
+
 
 ```
 
@@ -297,7 +301,7 @@ plot3_data <- plot1_data %>%
                              '7' = "Mid Items",
                              '8' = "Recency Items",
                              '9' = "Recency Items",
-                            '10' = "Recency Items"))
+                            '10' = "Recency Items")) #ST Great use of recode, I usually use case_when, but this is much more efficient!
 
 plot3_data %<>%
   group_by(word, bin, span_group) %>%
@@ -318,11 +322,9 @@ plot3 <- ggplot(plot3_data, aes(x = bin, y = mean_TEPR, colour = span_group)) +
       transition_states(stat(.draw), 1, 2) +
       enter_fade() + exit_fade() +
       shadow_mark(future = TRUE, size = 0.25, color = "gray50", alpha = 1/4) +
-      theme_minimal() +
       # Rotate x axis values so they are angled; center subtitle
       # Left-align caption
       theme(axis.text.x = element_text(angle = 45, hjust = 1),
-            plot.caption = element_text(hjust = 0),
             plot.subtitle = element_text(face = "bold", hjust = 0.5)) +
       # Change labels
       labs(caption = "Figure 3. Pupil diameter as a function of serial position and time across encoding period for low WMC (n = 31), medium WMC 
@@ -405,6 +407,8 @@ and Recency (words 8–10) for graphical purposes only.",
 
 plot3.2 + bbg_darktheme
 
+#####ST HAD TO INSTALL PACKAGE FOR THIS TO RUN
+#install.packages('gifski')
 ```
 
 ### Plot 4
@@ -423,23 +427,24 @@ strategy_data <- data %>%
          -primacy_recall:-ebin15w10pt4_mean) %>%
   gather(key = strat_type, value = response, passive_read_strat:other_strat)
 
-# Filter out NAs, and convert strategy type and score to factors
+# Filter out NAs, and convert strategy type and score to factors and recode
+# ST added recode into this mutate command
 strategy_data %<>%
   filter(response != "NA") %>%
   mutate(strat_type = as.factor(strat_type),
-         response = as.factor(response)) 
-
-#levels(as.factor(strategy_data$strat_type))
-
-# Recode variables for graph
-strategy_data %<>%
-  mutate(strat_type = recode(strat_type,
+         response = as.factor(response),
+         strat_type = recode(strat_type,
                              "grouping_strat" = "Grouping",
                              "imagery_strat" = "Imagery",
                              "other_strat" = "Other",
                              "passive_read_strat" = "Passive Reading",
                              "rehearsal_strat" = "Rote Rehearsal",
-                             "sentence_gen_strat" = "Sentence Generation")) %>%
+                             "sentence_gen_strat" = "Sentence Generation")) 
+
+#levels(as.factor(strategy_data$strat_type))
+
+# Recode variables for graph
+strategy_data %<>%
   group_by(strat_type, response) %>%
   summarise(mean_acc = mean(accuracy_mean, na.rm = TRUE),
             se_acc = sundry::se(accuracy_mean))
@@ -474,10 +479,9 @@ plot4 <- strategy_data %>%
       # Provide seperate graphs for each strategy
       facet_wrap(~strat_type) +
       scale_fill_carto_d(palette = "Burg") +
-      theme_minimal() +
       # Delete legend and left-align caption
       theme(legend.position="none",
-            plot.caption = element_text(hjust = 0)) +
+            strip.background = element_rect(fill = "gray10")) + #ST added to make facet backgrounds dark to see text
       #Modify labels
       labs(title = "Recall Accuracy as a Function of Strategy Type and Use of Strategy",
                y = "Mean Recall Accuracy",
